@@ -8,9 +8,11 @@ package mainlibrary;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,12 +29,17 @@ public class DB {
 
     // check configuration file properties.
     private static void checkFilePermissions() {
+        String path = "db.properties";
+        Set<PosixFilePermission> permissions;
         try {
+            permissions = Files.getPosixFilePermissions(Paths.get(path));
+            if (permissions.contains(PosixFilePermission.OTHERS_READ) ||
+                    permissions.contains(PosixFilePermission.OTHERS_WRITE) ||
+                    permissions.contains(PosixFilePermission.OTHERS_EXECUTE)) {
+                LOGGER.log(Level.SEVERE, "Database properties file has too permissive permissions.");
+            }
             if (!Files.isReadable(Paths.get("db.properties"))) {
                 throw new RuntimeException("Database properties file is not readable by the application.");
-            }
-            if (Files.getPosixFilePermissions(Paths.get("db.properties")).contains("rwx")) {
-                throw new RuntimeException("Database properties file has too permissive permissions.");
             }
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Failed to check database properties file permissions.");
