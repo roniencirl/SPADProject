@@ -1,5 +1,8 @@
 package mainlibrary;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.lang.reflect.Array;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -8,6 +11,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,6 +23,22 @@ import javax.crypto.spec.PBEKeySpec;
 public class LibraryUtils {
 
     private static final Logger LOGGER = Logger.getLogger(LibraryUtils.class.getName());
+
+    static Properties loadProperties() {
+        Properties props = new Properties();
+        Map<String, String> dbProps = new HashMap<String, String>();
+
+        try (FileInputStream in = new FileInputStream("db.properties")) {
+            props.load(in);
+            if (props.getProperty("db.connectionUrl").contains("useSSL=false")) {
+                LOGGER.log(Level.WARNING, "WARNING: SSL is not enabled for production.");
+
+            }
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Failed to load database properties from file.");
+        }
+        return props;
+    }
 
     public static boolean validatePassword(String password) {
         boolean isValid = true;
