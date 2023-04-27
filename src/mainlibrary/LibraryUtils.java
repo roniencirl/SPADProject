@@ -1,10 +1,23 @@
 package mainlibrary;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Base64;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 
 public class LibraryUtils {
+
+    private static final Logger LOGGER = Logger.getLogger(LibraryUtils.class.getName());
 
     public static boolean validatePassword(String password) {
         boolean isValid = true;
@@ -65,4 +78,46 @@ public class LibraryUtils {
         }
     }
 
+    // Use the password and a random salt to generates a salted hash
+    public static String createHashedPassword(String password) {
+        String generatedPassword = null;
+        int iterations = 600000;
+        int keyLength = 512;
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[16];
+        random.nextBytes(salt);
+
+        try {
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
+            KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, iterations, keyLength);
+            SecretKey secretKey = factory.generateSecret(spec);
+            byte[] encoded = secretKey.getEncoded();
+            generatedPassword = Base64.getEncoder().encodeToString(encoded);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            LOGGER.log(Level.SEVERE, "Password hash failed due to NoSuchAlgorithm or InvalidKeySpec.");
+        }
+        // return the base 64 encoded salt for this password and the base64 encoded
+        // hashed password, separated by a colon
+        return Base64.getEncoder().encodeToString(salt) + ":" + password;
+    }
+
+    // Given a password and a salt, return the salted hash
+    public static String hashPassword(String password, String saltString) {
+        String generatedPassword = null;
+        int iterations = 600000;
+        int keyLength = 512;
+        byte[] salt = Base64.getDecoder().decode(saltString);
+        try {
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
+            KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, iterations, keyLength);
+            SecretKey secretKey = factory.generateSecret(spec);
+            byte[] encoded = secretKey.getEncoded();
+            generatedPassword = Base64.getEncoder().encodeToString(encoded);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            LOGGER.log(Level.SEVERE, "Password hash failed due to NoSuchAlgorithm or InvalidKeySpec.");
+        }
+        // return the hashed password
+        return generatedPassword;
+
+    }
 }
