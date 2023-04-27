@@ -9,6 +9,7 @@ public class LibrarianDao {
         try {
 
             Connection con = DB.getConnection();
+            // TODO RS insecure password is not hashed.
             PreparedStatement ps = con.prepareStatement("insert into librarian(name,password,email,address,city,contact) values(?,?,?,?,?,?)");
             ps.setString(1, name);
             ps.setString(2, password);
@@ -19,6 +20,7 @@ public class LibrarianDao {
             status = ps.executeUpdate();
             con.close();
         } catch (Exception e) {
+            // TODO RS insecure unsantised output should be logged not printed
             System.out.println(e);
         }
         return status;
@@ -33,15 +35,17 @@ public class LibrarianDao {
             status = ps.executeUpdate();
             con.close();
         } catch (Exception e) {
+            // TODO as above
             System.out.println(e);
         }
         return status;
     }
-
+//
     public static boolean validate(String name, String password) {
         boolean status = false;
         try {
             Connection con = DB.getConnection();
+            // TODO RS: insecure 
             String select = "select * from Librarian where UserName= '" + name + "' and Password='"+ password +"'";
             Statement selectStatement = con.createStatement();
             ResultSet rs = selectStatement.executeQuery(select);
