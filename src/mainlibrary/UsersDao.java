@@ -30,10 +30,10 @@ public class UsersDao {
 
         try {
             Connection con = DB.getConnection();
-            PreparedStatement ps = con.prepareStatement("select UserPass from Users where UserName(name) values(?)");
-            ps.setString(1, name);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
+            PreparedStatement ps1 = con.prepareStatement("select UserPass from Users where UserName(name) values(?)");
+            ps1.setString(1, name);
+            ResultSet rs1 = ps1.executeQuery();
+            if (rs1.next()) {
                 String saltedHashedPass = rs.getString("UserPass");
                 String salt = saltedHashedPass.split(":")[0];
                 if (!password.equals(LibraryUtils.hashPassword(password, salt))) {
@@ -42,12 +42,12 @@ public class UsersDao {
                 }
             }
 
-            PreparedStatement ps = con.prepareStatement(
+            PreparedStatement ps2 = con.prepareStatement(
                     "select UserName from Users where Username(name) and UserPass(password) values(?,?)");
-            ps.setString(1, name);
-            ps.setString(2, password);
-            ResultSet rs = ps.executeQuery();
-            status = rs.next();
+            ps2.setString(1, name);
+            ps2.setString(2, password);
+            ResultSet rs2 = ps2.executeQuery();
+            status = rs2.next();
             con.close();
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Unable to validate Username and Password in the database.");
