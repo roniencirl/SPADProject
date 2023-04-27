@@ -30,11 +30,11 @@ public class UsersDao {
 
         try {
             Connection con = DB.getConnection();
-            PreparedStatement ps1 = con.prepareStatement("select UserPass from Users where UserName(name) values(?)");
+            PreparedStatement ps1 = con.prepareStatement("select UserPass from Users where UserName=?");
             ps1.setString(1, name);
             ResultSet rs1 = ps1.executeQuery();
             if (rs1.next()) {
-                String saltedHashedPass = rs.getString("UserPass");
+                String saltedHashedPass = rs1.getString("UserPass");
                 String salt = saltedHashedPass.split(":")[0];
                 if (!password.equals(LibraryUtils.hashPassword(password, salt))) {
                     LOGGER.log(Level.INFO, ("Username or password is incorrect."));
@@ -43,7 +43,7 @@ public class UsersDao {
             }
 
             PreparedStatement ps2 = con.prepareStatement(
-                    "select UserName from Users where Username(name) and UserPass(password) values(?,?)");
+                    "select UserName from Users where Username=? and UserPass=?");
             ps2.setString(1, name);
             ps2.setString(2, password);
             ResultSet rs2 = ps2.executeQuery();
@@ -64,12 +64,13 @@ public class UsersDao {
         }
         try {
             Connection con = DB.getConnection();
-            PreparedStatement ps = con.prepareStatement("select UserName from Users where UserName(name) values(?)");
+            PreparedStatement ps = con.prepareStatement("select UserName from Users where UserName=?");
             ps.setString(1, UserName);
             ResultSet rs = ps.executeQuery();
             status = rs.next();
             con.close();
         } catch (Exception e) {
+            System.out.print(e);
             LOGGER.log(Level.SEVERE, "Unable to check if Username is already in the database.");
         }
         return status;
@@ -82,8 +83,9 @@ public class UsersDao {
         int status = 0;
 
         if (!LibraryUtils.validateUsername(User) || !LibraryUtils.validatePassword(UserPass)
-                || !LibraryUtils.validateEmail(UserEmail) || !LibraryUtils.validateDate(Date)) {
-            LOGGER.log(Level.INFO, ("Username, password, email address or date are not compliant with requirements."));
+                || !LibraryUtils.validateEmail(UserEmail)) { // || !LibraryUtils.validateDate(Date)) {
+            System.out.println(User + UserPass + UserEmail + Date);
+            LOGGER.log(Level.INFO, ("Username, password, email address are not compliant with requirements."));
             return status;
         }
 
@@ -99,6 +101,7 @@ public class UsersDao {
             status = ps.executeUpdate();
             con.close();
         } catch (Exception e) {
+            System.out.println(e);
             LOGGER.log(Level.SEVERE, String.format("Unable to add new user to database."));
         }
         return status;
