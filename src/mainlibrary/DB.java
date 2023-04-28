@@ -39,11 +39,6 @@ public class DB {
     private static void checkFilePermissions() throws URISyntaxException {
         Path path;
         path = Paths.get("config/db.properties");
-        try {
-            System.out.println(path.toRealPath());
-        } catch (IOException ex) {
-            Logger.getLogger(DB.class.getName()).log(Level.SEVERE, null, ex);
-        }
         Set<PosixFilePermission> permissions;
         try {
             FileAttributeView attributeView;
