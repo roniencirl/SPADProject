@@ -88,12 +88,11 @@ public class DB {
         }
         return con;
     }
-
+/*
     public static String user = "root";
-    public static String connection = "jdbc:mysql://localhost:3307/library?autoReconnect=true&useSSL=false";
+    //public static String connection = "jdbc:mysql://localhost:3307/library?autoReconnect=true&useSSL=false";
 
-    // public static String connection =
-    // "jdbc:mysql://localhost:3307/library?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+    public static String connection = "jdbc:mysql://localhost:3307/library?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false";
 
     public static Connection getConnection() {
         Connection con = null;
@@ -106,7 +105,8 @@ public class DB {
             props.put("useUnicode", "true");
             props.put("useServerPrepStmts", "false"); // use client-side prepared statement
             props.put("characterEncoding", "UTF-8"); // ensure charset is utf8 here
-
+            System.out.println(props);
+            System.out.println(connection);
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection(connection, props);
         } catch (Exception e) {
@@ -114,4 +114,5 @@ public class DB {
         }
         return con;
     }
+*/
 }

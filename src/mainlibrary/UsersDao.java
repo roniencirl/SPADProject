@@ -30,6 +30,25 @@ public class UsersDao {
 
         try {
             Connection con = DB.getConnection();
+            // check if this is a plaintext password, upgrade to hash and login
+            PreparedStatement ps2 = con.prepareStatement("select UserName from Users where Username=? and UserPass=?");
+            ps2.setString(1, name);
+            ps2.setString(2, password);
+            ResultSet rs2 = ps2.executeQuery();
+            status = rs2.next();
+            System.out.println(status);
+            if (status) {
+                // plaintext password found, upgrade to hash
+                PreparedStatement ps3 = con
+                    .prepareStatement("update Users SET UserPass=? WHERE Username=? and UserPass=?");
+                ps3.setString(1, LibraryUtils.createHashedPassword(password));
+                ps3.setString(2, name);
+                ps3.setString(3, password);
+                ps3.executeUpdate();
+            }
+            // check if it's a hashed password
+            else {
+            
             PreparedStatement ps1 = con.prepareStatement("select UserPass from Users where UserName=?");
             ps1.setString(1, name);
             ResultSet rs1 = ps1.executeQuery();
@@ -42,20 +61,16 @@ public class UsersDao {
                 System.out.println(salt);
                 System.out.println(hash);
                 System.out.println(LibraryUtils.hashPassword(password, salt));
-                if (!hash.equals(LibraryUtils.hashPassword(password, salt))) {
-                    LOGGER.log(Level.INFO, ("Username or password is incorrect."));
-                    return status;
+                if (hash.equals(LibraryUtils.hashPassword(password, salt))) {
+                    status = true;
                 }
             }
-
-            PreparedStatement ps2 = con.prepareStatement(
-                    "select UserName from Users where Username=? and UserPass=?");
-            ps2.setString(1, name);
-            ps2.setString(2, password);
-            ResultSet rs2 = ps2.executeQuery();
-            status = rs2.next();
+            }
+        
+            
             con.close();
         } catch (Exception e) {
+            System.out.println(e);
             LOGGER.log(Level.SEVERE, "Unable to validate Username and Password in the database.");
         }
         return status;
