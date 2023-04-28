@@ -7,13 +7,11 @@ package mainlibrary;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttributeView;
 import java.nio.file.attribute.PosixFileAttributeView;
-import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -37,9 +35,8 @@ public class DB {
         }
     }
 
-    // check configuration file properties.
+    // check configuration file properties to ensure it's not world readable.
     private static void checkFilePermissions() throws URISyntaxException {
-
         Path path;
         path = Paths.get("config/db.properties");
         try {
@@ -47,7 +44,6 @@ public class DB {
         } catch (IOException ex) {
             Logger.getLogger(DB.class.getName()).log(Level.SEVERE, null, ex);
         }
-        // Path path = Paths.get("db.properties");
         Set<PosixFilePermission> permissions;
         try {
             FileAttributeView attributeView;
@@ -88,31 +84,5 @@ public class DB {
         }
         return con;
     }
-/*
-    public static String user = "root";
-    //public static String connection = "jdbc:mysql://localhost:3307/library?autoReconnect=true&useSSL=false";
 
-    public static String connection = "jdbc:mysql://localhost:3307/library?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false";
-
-    public static Connection getConnection() {
-        Connection con = null;
-        try {
-            Properties props = new Properties();
-            props.put("user", user);
-            // change the password to the password ↓↓↓↓↓↓↓↓↓↓↓ you enteredwhen setting up
-            // mysql
-            props.put("password", "password");
-            props.put("useUnicode", "true");
-            props.put("useServerPrepStmts", "false"); // use client-side prepared statement
-            props.put("characterEncoding", "UTF-8"); // ensure charset is utf8 here
-            System.out.println(props);
-            System.out.println(connection);
-            Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection(connection, props);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        return con;
-    }
-*/
 }
