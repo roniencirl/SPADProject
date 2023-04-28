@@ -39,7 +39,7 @@ public class DB {
 
     // check configuration file properties.
     private static void checkFilePermissions() throws URISyntaxException {
-        
+
         Path path;
         path = Paths.get("config/db.properties");
         try {
@@ -47,7 +47,7 @@ public class DB {
         } catch (IOException ex) {
             Logger.getLogger(DB.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //Path path = Paths.get("db.properties");
+        // Path path = Paths.get("db.properties");
         Set<PosixFilePermission> permissions;
         try {
             FileAttributeView attributeView;
@@ -57,7 +57,8 @@ public class DB {
                 if (permissions.contains(PosixFilePermission.OTHERS_READ) ||
                         permissions.contains(PosixFilePermission.OTHERS_WRITE) ||
                         permissions.contains(PosixFilePermission.OTHERS_EXECUTE)) {
-                    LOGGER.log(Level.SEVERE, String.format("Database properties file has too permissive permissions: %s", permissions.toString()));
+                    LOGGER.log(Level.SEVERE, String.format(
+                            "Database properties file has too permissive permissions: %s", permissions.toString()));
                 }
             }
             if (!Files.isReadable(path)) {
@@ -82,9 +83,35 @@ public class DB {
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection(props.getProperty("db.connectionUrl"), connProps);
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, String.format("Unable to connect to database %s", props.getProperty("db.connectionUrl")));
+            LOGGER.log(Level.SEVERE,
+                    String.format("Unable to connect to database %s", props.getProperty("db.connectionUrl")));
         }
         return con;
     }
 
+    public static String user = "root";
+    public static String connection = "jdbc:mysql://localhost:3307/library?autoReconnect=true&useSSL=false";
+
+    // public static String connection =
+    // "jdbc:mysql://localhost:3307/library?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+
+    public static Connection getConnection() {
+        Connection con = null;
+        try {
+            Properties props = new Properties();
+            props.put("user", user);
+            // change the password to the password ↓↓↓↓↓↓↓↓↓↓↓ you enteredwhen setting up
+            // mysql
+            props.put("password", "password");
+            props.put("useUnicode", "true");
+            props.put("useServerPrepStmts", "false"); // use client-side prepared statement
+            props.put("characterEncoding", "UTF-8"); // ensure charset is utf8 here
+
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection(connection, props);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return con;
+    }
 }
