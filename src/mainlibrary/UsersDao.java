@@ -33,7 +33,8 @@ public class UsersDao {
             ps1.setString(1, name);
             ps1.setString(2, password);
             ResultSet rs1 = ps1.executeQuery();
-            if (rs1.next()) {
+            status = rs1.next();
+            if (status) {
                 // plaintext password found, upgrade to hash
                 PreparedStatement ps2 = con
                         .prepareStatement("update Users SET UserPass=? WHERE Username=? and UserPass=?");
@@ -41,12 +42,11 @@ public class UsersDao {
                 ps2.setString(2, name);
                 ps2.setString(3, password);
                 ps2.executeUpdate();
-                status = true;
             }
             // check if it's a hashed password
             else {
                 PreparedStatement ps3 = con.prepareStatement("select UserPass from Users where UserName=?");
-                ps1.setString(1, name);
+                ps3.setString(1, name);
                 ResultSet rs2 = ps3.executeQuery();
 
                 if (rs2.next()) {

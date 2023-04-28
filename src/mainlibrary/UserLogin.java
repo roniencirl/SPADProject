@@ -163,7 +163,6 @@ public class UserLogin extends javax.swing.JFrame {
         String User;
         User = username.getText();
         String Pass = String.valueOf(password.getPassword());
-        System.out.println(User + " " + Pass);
         UsersDao.validate(User, Pass);
         if (UsersDao.validate(User, Pass)) {
             this.dispose();
