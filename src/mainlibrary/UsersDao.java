@@ -36,7 +36,7 @@ public class UsersDao {
             if (rs1.next()) {
                 String saltedHashedPass = rs1.getString("UserPass");
                 String salt = saltedHashedPass.split(":")[0];
-                if (!password.equals(LibraryUtils.hashPassword(password, salt))) {
+                if (!password.equals(LibraryUtils.hashPassword(password, salt).split(":", 1))) {
                     LOGGER.log(Level.INFO, ("Username or password is incorrect."));
                     return status;
                 }
