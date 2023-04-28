@@ -33,10 +33,16 @@ public class UsersDao {
             PreparedStatement ps1 = con.prepareStatement("select UserPass from Users where UserName=?");
             ps1.setString(1, name);
             ResultSet rs1 = ps1.executeQuery();
+            
             if (rs1.next()) {
                 String saltedHashedPass = rs1.getString("UserPass");
+                System.out.println("UserPass" + saltedHashedPass);
                 String salt = saltedHashedPass.split(":")[0];
-                if (!password.equals(LibraryUtils.hashPassword(password, salt).split(":", 1))) {
+                String hash = saltedHashedPass.split(":")[1];
+                System.out.println(salt);
+                System.out.println(hash);
+                System.out.println(LibraryUtils.hashPassword(password, salt));
+                if (!hash.equals(LibraryUtils.hashPassword(password, salt))) {
                     LOGGER.log(Level.INFO, ("Username or password is incorrect."));
                     return status;
                 }
