@@ -46,7 +46,7 @@ public class UsersDao {
             // check if it's a hashed password
             else {
                 PreparedStatement ps3 = con.prepareStatement("select UserPass from Users where UserName=?");
-                ps1.setString(1, name);
+                ps3.setString(1, name);
                 ResultSet rs2 = ps3.executeQuery();
 
                 if (rs2.next()) {
