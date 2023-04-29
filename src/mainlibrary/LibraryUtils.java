@@ -89,7 +89,8 @@ public class LibraryUtils {
         return isValid;
 
     }
-/*
+
+    /*  Date is not input from user, genereted by system
     public static boolean validateDate(String date) {
         boolean isValid = true;
         if (date == null) {
@@ -110,7 +111,7 @@ public class LibraryUtils {
     // Use the password and a random salt to generates a salted hash
     public static String createHashedPassword(String password) {
         String generatedHash = null;
-        int iterations = 600000;
+        int iterations = 600000; // OWASP recommendations
         int keyLength = 512;
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];
@@ -133,7 +134,7 @@ public class LibraryUtils {
     // Given a password and a salt, return the salted hash
     public static String hashPassword(String password, String saltString) {
         String generatedHash = null;
-        int iterations = 600000;
+        int iterations = 600000; // OWASP recommendations
         int keyLength = 512;
         byte[] salt = Base64.getDecoder().decode(saltString);
         try {
