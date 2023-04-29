@@ -28,15 +28,11 @@ public class DB {
     private static final Logger LOGGER = Logger.getLogger(DB.class.getName());
 
     static {
-        try {
-            checkFilePermissions();
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(DB.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        checkFilePermissions();
     }
 
     // check configuration file properties to ensure it's not world readable.
-    private static void checkFilePermissions() throws URISyntaxException {
+    private static void checkFilePermissions() {
         Path path;
         path = Paths.get("config/db.properties");
         Set<PosixFilePermission> permissions;
